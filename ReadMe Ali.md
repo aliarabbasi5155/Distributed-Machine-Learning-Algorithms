@@ -62,3 +62,42 @@
         i. Define local_SGD_SlowMo
         ii. Apply on different shards
 
+
+
+
+Points: 
+Bazi vaghta mibinim SGD for Large Batch, dar asl SGD yani Batch Size = 1 yani SGD ba Large Batch bi mani mishe, vali khob in SGD be jaaye Mini-batch Gradient Descent estefade mishe.
+
+Problems:
+paragraph 2 paper e SHAT ro negah kon. toosh oumade algorithm haye PS-based approach ro tozih dade. ye nokte riz dare: tooye PS server (Hamoon outer loop) ma miangine model ha ro nemigirim balke miangine gradient ha ro az model e feli kam mikonim. pas tebghe in tooye worker ha ham NABAYAD model ro hesab konim va badesh ham model ro befrestim baraye PS-server, BALKE bayad gradient ha ro befrestim baraye server va oun az avg begire va az global model kam kone. Baraye etelaate bishtar papere SlowMo daghighan zire pseudo code e Algorithm 1 gofte bayad chejoori sum begirim (ta jaii ke yadam miad) vase hamine ke lr bayad baraye outer loop bashe, choon aslan tooye iuter loop bayad global model ba global_model = global_model - lr*gradient update beshe. 
+
+Tooye SlowMo na, vali tooye LocalSGD fekr konam model weights average gerefte mishe. Paragraphe yeki moonde be akhare Paper 26 ro bekhoon.
+
+Tebghe Paragraphe LocalSGD safhe 4 paper 26, avalnworker ha 10 ta iteration ba SGD mizanan va bad mifrestan baraye PS ta LocalSGD emal beshe (Hamoon average gereftan).
+
+LocalSGD ro harki ye joor tozih dade, vali in code ham manteghie,
+Algorithm: LocalSGD
+Input: Initial model \( w_0 \), learning rate \( \eta \), number of local steps \( H \), number of global synchronization steps \( T \), number of workers \( K \)
+1. Initialize \( w_k^{(0)} = w_0 \) for all workers \( k = 1, 2, \dots, K \)
+2. for each global step \( t = 0, 1, \dots, T-1 \) do:
+3.     for each worker \( k = 1, 2, \dots, K \) in parallel do:
+4.         for each local step \( h = 1, 2, \dots, H \) do:
+5.             Compute the local gradient \( g_k^{(t,h)} \) using the current model \( w_k^{(t,h-1)} \)
+6.             Update the local model: \( w_k^{(t,h)} = w_k^{(t,h-1)} - \eta g_k^{(t,h)} \)
+7.         end for
+8.         Compute the model difference \( \Delta w_k^{(t)} = w_k^{(t,H)} - w_k^{(t,0)} \)
+9.     end for
+10.    Aggregate the updates across all workers: \( w_{t+1} = w_t - \frac{1}{K} \sum_{k=1}^K \Delta w_k^{(t)} \)
+11. end for
+Output: Final model \( w_T \)
+
+Aya tooye har worker 1 minibatch gharar migire?
+
+
+Problem: Fek konam tooye LocalSGD va SlowMo, learning rate tooye outer loop (yani tooye marhale synchronize kardan) update mishe. tooye peper slowmo neveshte γt, yani baraye har outer loop sabete.
+
+Problem: Tooye paper SHAT ci bayad 1 beshe na 0, dalilesh ham baghalesh neveshtam
+
+Problem: Tooye LocalSGD inke gradinet begirim va miangine gradient begirim va bad oun ro emal konim mesle miangin gereftan az model ha mimoone. va dar zemn tooye hame other paper ha neveshtan ke synchronize stage tooye localsgd miangin model hast (makhsoosan tooye algorithm ha)
+
+Problem: Tooye local SGD tebghe algorithm khodesh do bar dare LAMBDA*LR hesab mishe yebar tooye worker local update yebar ham tooye server global update
