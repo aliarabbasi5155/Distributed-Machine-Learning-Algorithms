@@ -101,3 +101,6 @@ Problem: Tooye paper SHAT ci bayad 1 beshe na 0, dalilesh ham baghalesh neveshta
 Problem: Tooye LocalSGD inke gradinet begirim va miangine gradient begirim va bad oun ro emal konim mesle miangin gereftan az model ha mimoone. va dar zemn tooye hame other paper ha neveshtan ke synchronize stage tooye localsgd miangin model hast (makhsoosan tooye algorithm ha)
 
 Problem: Tooye local SGD tebghe algorithm khodesh do bar dare LAMBDA*LR hesab mishe yebar tooye worker local update yebar ham tooye server global update
+
+LocalAdaScale
+Problem: G bar shayad bekhatere taghrib zadan ke too formool estefade mishe manfimishe. va hamchenin bayad mosbat beshe choon magnitude yani toole vector hast.
